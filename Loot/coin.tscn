@@ -1,0 +1,148 @@
+[gd_scene load_steps=20 format=3 uid="uid://cet6htnvb63w0"]
+
+[ext_resource type="Texture2D" uid="uid://cydoad8qm4q8w" path="res://Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/free_rotating_key_frakassets/coin1_16x16.png" id="1_i7ynu"]
+
+[sub_resource type="GDScript" id="GDScript_tasup"]
+script/source = "extends Area2D
+
+func _on_body_entered(body: Node2D) -> void:
+	if body.name==\"mikasa\":
+		var tween=get_tree().create_tween()
+		tween.tween_property(self,\"position\",position-Vector2(0,25),0.3)
+		tween.tween_callback(queue_free)
+		body.coin+=1
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8doex"]
+radius = 11.1803
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mef05"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rxnfw"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o0wti"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_obkfh"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t078a"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_38tgt"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b02js"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(96, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h10m0"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(112, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_503ei"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(128, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_trb2t"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(144, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_usmy5"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(160, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_73r5w"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(176, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x3b5w"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(192, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xxn2j"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(208, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4t2ec"]
+atlas = ExtResource("1_i7ynu")
+region = Rect2(224, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_uih6w"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mef05")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rxnfw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o0wti")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_obkfh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t078a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_38tgt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b02js")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h10m0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_503ei")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_trb2t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_usmy5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_73r5w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x3b5w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xxn2j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4t2ec")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 12.0
+}]
+
+[node name="Coin" type="Area2D"]
+collision_layer = 3
+collision_mask = 3
+script = SubResource("GDScript_tasup")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_8doex")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(2, -1)
+scale = Vector2(0.921875, 0.997438)
+sprite_frames = SubResource("SpriteFrames_uih6w")
+animation = &"Idle"
+autoplay = "Idle"
+frame_progress = 0.648954
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

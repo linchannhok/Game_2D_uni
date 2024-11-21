@@ -1,0 +1,312 @@
+[gd_scene load_steps=29 format=3 uid="uid://dx260ifq71bnd"]
+
+[ext_resource type="PackedScene" uid="uid://cbrhbjwym86ld" path="res://damage_box.tscn" id="2_6rhxa"]
+[ext_resource type="Texture2D" uid="uid://bc4x1mkmynaa8" path="res://player/Mobile - Senran no Samurai Kingdom JPN - Armin.png" id="2_s07vk"]
+[ext_resource type="PackedScene" uid="uid://cd5qd6rrwsekx" path="res://player/stats.tscn" id="3_fmug1"]
+
+[sub_resource type="GDScript" id="GDScript_8c2p7"]
+script/source = "extends CharacterBody2D
+
+
+const SPEED = 300.0
+const JUMP_VELOCITY = -400.0
+const ATTACK_DURATION = 0.3  # Тривалість анімації атаки
+const ULTIMATE_DURATION = 0.5  # Тривалість ультимативної анімації
+
+var gravity = ProjectSettings.get_setting(\"physics/2d/default_gravity\")
+@onready var anim = $AnimatedSprite2D  # Reference to the AnimatedSprite2D node
+
+# Змінні для зберігання часу атаки та ультимативної атаки
+var attack_timer = 0.0
+var ultimate_timer = 0.0
+var is_attacking = false  # Змінна для перевірки, чи виконується атака
+var is_ultimating = false  # Змінна для перевірки, чи виконується ультимативна атака
+
+func _physics_process(delta):
+	# Додати гравітацію.
+	if not is_on_floor():
+		velocity.y += gravity * delta
+
+	# Обробка стрибка.
+	if Input.is_action_just_pressed(\"ui_accept\") and is_on_floor():
+		velocity.y = JUMP_VELOCITY
+
+	# Анімація атаки може бути запущена з будь-якого стану
+	if Input.is_action_just_pressed(\"ui_attack\") and not is_attacking and not is_ultimating:
+		print(\"Attack button pressed!\")  # Додати для діагностики
+		anim.play(\"attack\")
+		is_attacking = true  # Встановлюємо, що атака активна
+		attack_timer = 0.0  # Скидаємо таймер
+
+	# Обробка таймера атаки
+	if is_attacking:
+		attack_timer += delta  # Збільшуємо таймер
+		if attack_timer >= ATTACK_DURATION:
+			is_attacking = false  # Завершення атаки
+			if is_on_floor():  # Повертаємося до idle, якщо на землі
+				anim.play(\"idle\")
+
+	# Обробка ультимативної атаки
+	if Input.is_action_just_pressed(\"ui_ultimate\") and not is_attacking and not is_ultimating:
+		print(\"Ultimate button pressed!\")  # Додати для діагностики
+		anim.play(\"ultimate\")
+		is_ultimating = true  # Встановлюємо, що ультимативна атака активна
+		ultimate_timer = 0.0  # Скидаємо таймер
+
+	# Обробка таймера ультимативної атаки
+	if is_ultimating:
+		ultimate_timer += delta  # Збільшуємо таймер
+		if ultimate_timer >= ULTIMATE_DURATION:
+			is_ultimating = false  # Завершення ультимативної атаки
+			if is_on_floor():  # Повертаємося до idle, якщо на землі
+				anim.play(\"idle\")
+
+	# Обробка напрямку руху
+	var direction = Input.get_axis(\"ui_left\", \"ui_right\")
+	if direction:
+		velocity.x = direction * SPEED
+		if not is_attacking and not is_ultimating:  # Не відтворювати інші анімації під час атаки або ультимативної атаки
+			if is_on_floor():
+				anim.play(\"run\")  # Відтворюємо анімацію бігу, коли на землі
+				anim.flip_h = direction == -1  # Перевертаємо спрайт для руху вліво
+			else:
+				# Якщо у повітрі, відтворюємо idle, якщо не атакуємо або не ультиматуємо
+				if not is_attacking and not is_ultimating:
+					anim.play(\"idle\")  # Відтворюємо анімацію простою, якщо у повітрі
+				anim.play(\"jump\")  # Відтворюємо анімацію стрибка, коли в повітрі
+				# Додати поворот персонажа під час стрибка
+				anim.flip_h = direction == -1  # Перевертаємо спрайт для руху вліво
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+		if is_on_floor() and not is_attacking and not is_ultimating:
+			anim.play(\"idle\")  # Відтворюємо анімацію простою, якщо немає введення
+
+	move_and_slide()  # Рухаємо персонажа
+"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_elw0k"]
+radius = 13.0
+height = 44.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kqvbo"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(360, 0, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mby5d"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(720, 228, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ndcuw"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(480, 0, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gu63g"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(600, 0, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lshs0"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(0, 0, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x7lqr"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(120, 0, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hwwtj"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(240, 0, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8s4sw"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(360, 0, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aw61l"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(720, 0, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ina8c"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(720, 228, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x8w3a"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(360, 114, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qjduj"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(480, 114, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2xlqd"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(600, 114, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jfxud"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(0, 228, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2inbf"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(120, 228, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m5rb2"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(240, 228, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0h7rw"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(360, 228, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lnhyn"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(480, 228, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hptjc"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(600, 228, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_msmxs"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(0, 114, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5waat"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(120, 114, 120, 114)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j4dqn"]
+atlas = ExtResource("2_s07vk")
+region = Rect2(240, 114, 120, 114)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mvsu6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kqvbo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mby5d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ndcuw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gu63g")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lshs0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x7lqr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hwwtj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8s4sw")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aw61l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ina8c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x8w3a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qjduj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2xlqd")
+}],
+"loop": true,
+"name": &"jump",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jfxud")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2inbf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m5rb2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0h7rw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lnhyn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hptjc")
+}],
+"loop": true,
+"name": &"run",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_msmxs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5waat")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j4dqn")
+}],
+"loop": true,
+"name": &"ultimate",
+"speed": 5.0
+}]
+
+[node name="Armin" type="CharacterBody2D"]
+collision_layer = 3
+script = SubResource("GDScript_8c2p7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_elw0k")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(9, -10)
+scale = Vector2(0.66, 0.66)
+sprite_frames = SubResource("SpriteFrames_mvsu6")
+animation = &"jump"
+frame_progress = 0.456457
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2.4, 2.4)
+limit_left = 0
+limit_right = 1800
+limit_bottom = 675
+position_smoothing_enabled = true
+
+[node name="AttackDirection" type="Node2D" parent="."]
+
+[node name="DamageBox" parent="AttackDirection" instance=ExtResource("2_6rhxa")]
+
+[node name="HurtBox" parent="AttackDirection/DamageBox" index="0"]
+collision_layer = 16
+collision_mask = 0
+
+[node name="HitBox" parent="AttackDirection/DamageBox" index="1"]
+collision_layer = 64
+collision_mask = 32
+
+[node name="CollisionShape2D" parent="AttackDirection/DamageBox/HitBox" index="0"]
+position = Vector2(25, 0)
+disabled = false
+
+[node name="stats" parent="." instance=ExtResource("3_fmug1")]
+
+[editable path="AttackDirection/DamageBox"]

@@ -1,0 +1,44 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1siolw8g3uso"]
+
+[ext_resource type="Script" path="res://menu.gd" id="1_amt4l"]
+[ext_resource type="Texture2D" uid="uid://ctu2n5can6pkc" path="res://Старт_фон.jpg" id="2_p7cgn"]
+
+[node name="Menu" type="Node2D"]
+script = ExtResource("1_amt4l")
+metadata/_edit_horizontal_guides_ = [-113.0]
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="СтартФон2" type="Sprite2D" parent="."]
+position = Vector2(603.381, 307.25)
+scale = Vector2(1.88318, 1.92403)
+texture = ExtResource("2_p7cgn")
+
+[node name="СтартФон" type="Sprite2D" parent="."]
+position = Vector2(578, 322)
+scale = Vector2(1.78906, 1.78315)
+
+[node name="but_play" type="Button" parent="."]
+offset_left = 470.0
+offset_top = 220.0
+offset_right = 668.0
+offset_bottom = 295.0
+text = "PLAY"
+
+[node name="but_quit" type="Button" parent="."]
+offset_left = 471.0
+offset_top = 406.0
+offset_right = 669.0
+offset_bottom = 482.0
+text = "QUIT"
+
+[node name="but_settings" type="Button" parent="."]
+offset_left = 470.0
+offset_top = 310.0
+offset_right = 669.0
+offset_bottom = 391.0
+text = "SETTINGS"
+
+[connection signal="pressed" from="but_play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="but_quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="but_settings" to="." method="_on_settings_pressed"]
